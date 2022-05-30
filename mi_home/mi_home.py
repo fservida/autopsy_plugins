@@ -238,7 +238,7 @@ class MiHomeIngestModule(DataSourceIngestModule):
                             room_id = room.get("id")
                             for device in room.get("dids", []):
                                 print("Device: " + device)
-                                self.add_device(file, room_name, room_id, device)
+                                self.add_device(file, room_name, room_id, home_id, device)
         except Exception as e:
             self.log(Level.INFO, "Error while processing file: " + file.getName())
             self.log(Level.INFO, "Error MSG: " + str(e))
@@ -301,7 +301,7 @@ class MiHomeIngestModule(DataSourceIngestModule):
 
         blackboard.postArtifact(artifact, MiHomeIngestModuleFactory.moduleName)
 
-    def add_device(self, file, room_name, room_id, device):
+    def add_device(self, file, room_name, room_id, home_id, device):
         
         # Get Blackboard
         sk_case = Case.getCurrentCase().getSleuthkitCase()
@@ -316,10 +316,12 @@ class MiHomeIngestModule(DataSourceIngestModule):
 
         att_room_name_id = blackboard.getOrAddAttributeType("ESC_IOT_MIHOME_DEVICES_ROOM_NAME", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Room Name")
         att_room_id_id = blackboard.getOrAddAttributeType("ESC_IOT_MIHOME_DEVICES_ROOM_ID", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Room ID")
+        att_home_id_id = blackboard.getOrAddAttributeType("ESC_IOT_MIHOME_DEVICES_HOME_ID", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Home ID")
         att_device_id_id = blackboard.getOrAddAttributeType("ESC_IOT_MIHOME_DEVICES_DEVICE_ID", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Device ID")
 
         attributes.append(BlackboardAttribute(att_room_name_id, MiHomeIngestModuleFactory.moduleName, room_name))
         attributes.append(BlackboardAttribute(att_room_id_id, MiHomeIngestModuleFactory.moduleName, room_id))
+        attributes.append(BlackboardAttribute(att_home_id_id, MiHomeIngestModuleFactory.moduleName, home_id))
         attributes.append(BlackboardAttribute(att_device_id_id, MiHomeIngestModuleFactory.moduleName, device))
 
         artifact.addAttributes(attributes)
